@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-web
+  template:
+    metadata:
+      labels:
+        app: simple-web
+    spec:
+      containers:
+        - name: simple-web
+          image: simple-web:1.0
+          volumeMounts:
+            - name: app-log-vol
+              mountPath: /app/logs
+            - name: config-vol
+              mountPath: /app/conf/application.properties
+              subPath: application.properties
+      volumes:
+        - name: app-log-vol
+          emptyDir: {}
+        - name: config-vol
+          configMap:
+            name: simple-web-config
+            items:
+              - key: app-config
+                path: application.properties
+
